@@ -1,14 +1,13 @@
-Index: src/tools/Makefile.am
+Index: src/pkcs11/Makefile.am
 ===================================================================
---- src/tools/Makefile.am	(revisión: 412)
-+++ src/tools/Makefile.am	(copia de trabajo)
-@@ -15,7 +15,8 @@
- AM_CFLAGS = $(OPTIONAL_OPENSSL_CFLAGS) $(OPTIONAL_READLINE_CFLAGS) $(PTHREAD_CFLAGS)
- INCLUDES = -I$(top_srcdir)/src
- LIBS = $(top_builddir)/src/common/libcompat.la \
--	$(top_builddir)/src/libopensc/libopensc.la
-+	$(top_builddir)/src/libopensc/libopensc.la \
-+        $(top_builddir)/src/common/libltdl.la
+--- src/pkcs11/Makefile.am	(revisión: 412)
++++ src/pkcs11/Makefile.am	(copia de trabajo)
+@@ -20,7 +20,7 @@
  
- opensc_tool_SOURCES = opensc-tool.c util.c
- piv_tool_SOURCES = piv-tool.c util.c
+ opensc_pkcs11_la_SOURCES = $(OPENSC_PKCS11_SRC) $(OPENSC_PKCS11_INC) hack-disabled.c
+ opensc_pkcs11_la_LIBADD = $(OPENSC_PKCS11_LIBS)
+-opensc_pkcs11_la_LDFLAGS = $(AM_LDFLAGS) \
++opensc_pkcs11_la_LDFLAGS = $(AM_LDFLAGS) $(LTLIB_LIBS) \
+ 	-export-symbols "$(srcdir)/opensc-pkcs11.exports" \
+ 	-module -shared -avoid-version -no-undefined
+ 

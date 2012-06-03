@@ -1,15 +1,14 @@
 Name:           opensc-opendnie
 Version:        0.12.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Smart card library and applications
 
 Group:          System Environment/Libraries
 License:        LGPLv2+
 URL:            http://www.opensc-project.org/opensc/
-#Source0:        http://www.opensc-project.org/files/opensc/%{name}-%{version}.tar.gz
-Source0:		opensc-0.12.2.tar.gz
-Patch1:		opensc-to-opendnie-0.12.2.patch
-Patch2:		opensc-opendnie-0.12.2-fix-compilation-error.patch
+#Source0:        http://www.opensc-project.org/files/opensc/%%{name}-%%{version}.tar.gz
+Source0:        opensc-0.12.2.tar.gz
+Patch1:         opensc-to-opendnie-0.12.2.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pcsc-lite-devel
@@ -20,11 +19,11 @@ BuildRequires:  docbook-style-xsl
 BuildRequires:  automake
 
 Requires:       pcsc-lite-libs%{?_isa}
-Requires:	pinentry
+Requires:       pinentry
 Obsoletes:      mozilla-opensc-signer < 0.12.0
 Obsoletes:      opensc-devel < 0.12.0
 
-Provides:       opensc
+Provides:       opensc = 0.12.2
 Conflicts:      opensc
 
 %description
@@ -42,16 +41,16 @@ from OpenDNIe project
 %prep
 %setup -q -n opensc-%{version}
 %patch1 -p1
-%patch2 -p0
 
 sed -i -e 's|"/lib /usr/lib\b|"/%{_lib} %{_libdir}|' configure # lib64 rpaths
 cp -p src/pkcs15init/README ./README.pkcs15init
 cp -p src/scconf/README.scconf .
-# No %{_libdir} here to avoid multilib conflicts; it's just an example
+# No %%{_libdir} here to avoid multilib conflicts; it's just an example
 sed -i -e 's|/usr/local/towitoko/lib/|/usr/lib/ctapi/|' etc/opensc.conf.in
 
 
 %build
+./bootstrap
 %configure  --disable-static \
   --disable-assert \
   --enable-pcsc \
@@ -128,6 +127,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Jun 3 2012 Juan Orti Alcaine <j.orti.alcaine@gmail.com> - 0.12.2-3
+- Bootstrap installation
+
 * Tue Nov 1 2011 Ismael Olea <ismael@olea.org> - 0.12.2-2
 - rpm sanitization:
 - modified package name to opensc-opendni
