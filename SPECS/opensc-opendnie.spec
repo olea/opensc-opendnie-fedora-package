@@ -1,20 +1,19 @@
 Name:           opensc-opendnie
 Version:        0.12.2
 Release:        3%{?dist}
-Summary:        Smart card library and applications
+Summary:        Smart card library and applications with DNIe support
 
 Group:          System Environment/Libraries
 License:        LGPLv2+
-URL:            http://www.opensc-project.org/opensc/
-#Source0:        http://www.opensc-project.org/files/opensc/%%{name}-%%{version}.tar.gz
-Source0:        opensc-0.12.2.tar.gz
-Patch1:         opensc-to-opendnie-0.12.2.patch
+URL:            http://forja.cenatic.es/projects/opendnie
+Source0:        https://forja.cenatic.es/frs/download.php/1332/%{name}-%{version}.tar.gz
+Source1:        https://forja.cenatic.es/frs/download.php/1333/%{name}-%{version}.tar.gz.md5
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  pcsc-lite-devel
 BuildRequires:  readline-devel
 BuildRequires:  openssl-devel
-BuildRequires:  /usr/bin/xsltproc
+BuildRequires:  %{_bindir}/xsltproc
 BuildRequires:  docbook-style-xsl
 BuildRequires:  automake
 
@@ -23,7 +22,7 @@ Requires:       pinentry
 Obsoletes:      mozilla-opensc-signer < 0.12.0
 Obsoletes:      opensc-devel < 0.12.0
 
-Provides:       opensc = 0.12.2
+Provides:       opensc = %{version}
 Conflicts:      opensc
 
 %description
@@ -34,13 +33,12 @@ keys on the smart card is possible with PKCS #15 compatible cards,
 such as the FINEID (Finnish Electronic IDentity) card.  Swedish Posten
 eID cards have also been confirmed to work.
 
-This package is an special recompilation of OpenSC-0.12.1 with the
+This package is an special recompilation of OpenSC-0.12.2 with the
 addition of support for Spanish DNIe ( eID card from Spain Country)
 from OpenDNIe project
 
 %prep
 %setup -q -n opensc-%{version}
-%patch1 -p1
 
 sed -i -e 's|"/lib /usr/lib\b|"/%{_lib} %{_libdir}|' configure # lib64 rpaths
 cp -p src/pkcs15init/README ./README.pkcs15init
@@ -52,9 +50,8 @@ sed -i -e 's|/usr/local/towitoko/lib/|/usr/lib/ctapi/|' etc/opensc.conf.in
 %build
 ./bootstrap
 %configure  --disable-static \
-  --disable-assert \
   --enable-pcsc \
-  --with-pcsc-provider=libpcsclite.so.1
+  --enable-doc
 make %{?_smp_mflags}
 
 
@@ -129,6 +126,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun Jun 3 2012 Juan Orti Alcaine <j.orti.alcaine@gmail.com> - 0.12.2-3
 - Bootstrap installation
+- spec cleanup
 
 * Tue Nov 1 2011 Ismael Olea <ismael@olea.org> - 0.12.2-2
 - rpm sanitization:
